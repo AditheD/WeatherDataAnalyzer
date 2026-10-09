@@ -20,24 +20,16 @@ public record WeatherReading(
     public WeatherReading {
         Objects.requireNonNull(date, "Date is required");
 
-        if (!Double.isFinite(temperature)
-                || !Double.isFinite(humidity)
-                || !Double.isFinite(precipitation)) {
-            throw new IllegalArgumentException(
-                    "Measurements must be finite numbers."
-            );
+        if (!Double.isFinite(temperature) || !Double.isFinite(humidity) || !Double.isFinite(precipitation)) {
+            throw new IllegalArgumentException("Measurements must be finite numbers.");
         }
 
         if (humidity < 0 || humidity > 100) {
-            throw new IllegalArgumentException(
-                    "Humidity must be between 0 and 100."
-            );
+            throw new IllegalArgumentException("Humidity must be between 0 and 100.");
         }
 
         if (precipitation < 0) {
-            throw new IllegalArgumentException(
-                    "Precipitation cannot be negative."
-            );
+            throw new IllegalArgumentException("Precipitation cannot be negative.");
         }
     }
 

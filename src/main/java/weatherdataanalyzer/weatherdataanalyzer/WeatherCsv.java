@@ -31,28 +31,21 @@ public interface WeatherCsv {
     static List<WeatherReading> load(Path path) throws IOException {
         var lines = Files.readAllLines(path, StandardCharsets.UTF_8);
 
-        if (lines.isEmpty()
-                || !lines.get(0)
+        if (lines.isEmpty() || !lines.get(0)
                 .replace("\uFEFF", "")
                 .replace(" ", "")
                 .strip()
                 .equals("Date,Temperature,Humidity,Precipitation")) {
-            throw new IllegalArgumentException(
-                    "Expected header: Date,Temperature,Humidity,Precipitation"
-            );
+            throw new IllegalArgumentException("Expected header: Date,Temperature,Humidity,Precipitation");
         }
 
         var dates = new HashSet<LocalDate>();
 
-        return IntStream.range(1, lines.size())
-                .filter(i -> !lines.get(i).isBlank())
-                .mapToObj(i -> {
+        return IntStream.range(1, lines.size()).filter(i -> !lines.get(i).isBlank()).mapToObj(i -> {
                     var reading = parse(lines.get(i), i + 1);
 
                     if (!dates.add(reading.date())) {
-                        throw new IllegalArgumentException(
-                                "Duplicate date at line " + (i + 1)
-                        );
+                        throw new IllegalArgumentException("Duplicate date at line " + (i + 1));
                     }
 
                     return reading;
@@ -76,9 +69,7 @@ public interface WeatherCsv {
             var fields = line.split(",", -1);
 
             if (fields.length != 4) {
-                throw new IllegalArgumentException(
-                        "Expected exactly four columns"
-                );
+                throw new IllegalArgumentException("Expected exactly four columns");
             }
 
             return new WeatherReading(
@@ -89,11 +80,7 @@ public interface WeatherCsv {
             );
 
         } catch (RuntimeException error) {
-            throw new IllegalArgumentException(
-                    "Invalid CSV line " + lineNumber
-                            + ": " + error.getMessage(),
-                    error
-            );
+            throw new IllegalArgumentException("Invalid CSV line " + lineNumber + ": " + error.getMessage(), error);
         }
     }
 }

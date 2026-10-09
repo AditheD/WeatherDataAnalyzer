@@ -22,10 +22,8 @@ public interface WeatherAnalysis {
 /// @param data daily observations
 /// @param month requested year and month
 /// @return average, or empty when the month has no observations
-static OptionalDouble averageTemperature(
-        List<WeatherReading> data,
-        YearMonth month
-) {
+static OptionalDouble averageTemperature(List<WeatherReading> data, YearMonth month) {
+
     return data.stream()
             .filter(r -> YearMonth.from(r.date()).equals(month))
             .mapToDouble(WeatherReading::temperature)
@@ -42,14 +40,10 @@ static OptionalDouble averageTemperature(
     /// @param threshold finite temperature in Celsius
     /// @return immutable matching observations
     /// @throws IllegalArgumentException if the threshold is not finite
-    static List<WeatherReading> aboveThreshold(
-            List<WeatherReading> data,
-            double threshold
-    ) {
+    static List<WeatherReading> aboveThreshold(List<WeatherReading> data, double threshold) {
+
         if (!Double.isFinite(threshold)) {
-            throw new IllegalArgumentException(
-                    "Threshold must be a finite number"
-            );
+            throw new IllegalArgumentException("Threshold must be a finite number");
         }
 
         return data.stream()
@@ -86,9 +80,7 @@ static OptionalDouble averageTemperature(
     /// @throws IllegalArgumentException if temperature is not finite
     static String category(double temperature) {
         if (!Double.isFinite(temperature)) {
-            throw new IllegalArgumentException(
-                    "Temperature must be finite"
-            );
+            throw new IllegalArgumentException("Temperature must be finite");
         }
 
         return switch (Double.valueOf(temperature)) {

@@ -23,16 +23,11 @@ public interface WeatherApp {
     /// @param args optional CSV path; defaults to weatherdata.csv
     static void main(String[] args) {
         try {
-            var path = Path.of(
-                    args.length == 0 ? "weatherdata.csv" : args[0]
-            );
+            var path = Path.of(args.length == 0 ? "weatherdata.csv" : args[0]);
 
             var data = WeatherCsv.load(path);
 
-            System.out.println(
-                    "Loaded " + data.size()
-                            + " weather observations from " + path
-            );
+            System.out.println("Loaded " + data.size() + " weather observations from " + path);
 
             try (var input = new Scanner(System.in)) {
                 boolean running = true;
@@ -55,24 +50,16 @@ public interface WeatherApp {
                     }
 
                     try {
-                        running = handle(
-                                input.nextLine().strip(),
-                                data,
-                                input
-                        );
-                    } catch (IllegalArgumentException
-                             | DateTimeException error) {
-                        System.out.println(
-                                "Input error: " + error.getMessage()
-                        );
+                        running = handle(input.nextLine().strip(), data, input);
+
+                    } catch (IllegalArgumentException | DateTimeException error) {
+                        System.out.println("Input error: " + error.getMessage());
                     }
                 }
             }
 
         } catch (IOException | IllegalArgumentException error) {
-            System.err.println(
-                    "Could not load weather data: " + error.getMessage()
-            );
+            System.err.println("Could not load weather data: " + error.getMessage());
 
             System.exit(1);
         }
@@ -82,17 +69,13 @@ public interface WeatherApp {
     ///
     /// ```java
     /// WeatherApp.handle("3", data, new Scanner(""));
-    ///```
+    ///
     ///
     /// @param choice menu selection
     /// @param data   daily observations
     /// @param input  scanner used for follow-up input
     /// @return false to exit, or true to continue
-    static boolean handle(
-            String choice,
-            List<WeatherReading> data,
-            Scanner input
-    ) {
+    static boolean handle(String choice, List<WeatherReading> data, Scanner input) {
         switch (choice) {
             case "1" -> {
                 System.out.print("Enter month (YYYY-MM): ");
@@ -101,75 +84,41 @@ public interface WeatherApp {
                     return false;
                 }
 
-                var month = YearMonth.parse(
-                        input.nextLine().strip()
-                );
+                var month = YearMonth.parse(input.nextLine().strip());
 
-                var average = WeatherAnalysis.averageTemperature(
-                        data,
-                        month
-                );
+                var average = WeatherAnalysis.averageTemperature(data, month);
 
-                System.out.println(
-                        average.isPresent()
-                                ? String.format(
-                                Locale.US,
-                                "Average for %s: %.2f C",
-                                month,
-                                average.getAsDouble()
-                        )
-                                : "No observations for " + month
-                );
+                System.out.println(average.isPresent() ? String.format(Locale.US,
+                        "Average for %s: %.2f C", month,
+                        average.getAsDouble()) : "No observations for " + month);
             }
 
             case "2" -> {
-                System.out.print(
-                        "Enter temperature threshold (C): "
-                );
+                System.out.print("Enter temperature threshold (C): ");
 
                 if (!input.hasNextLine()) {
                     return false;
                 }
 
-                double threshold = Double.parseDouble(
-                        input.nextLine().strip()
-                );
+                double threshold = Double.parseDouble(input.nextLine().strip());
 
-                var matches = WeatherAnalysis.aboveThreshold(
-                        data,
-                        threshold
-                );
+                var matches = WeatherAnalysis.aboveThreshold(data, threshold);
 
-                System.out.println(
-                        "Days above threshold: " + matches.size()
-                );
+                System.out.println("Days above threshold: " + matches.size());
 
-                matches.forEach(r ->
-                        System.out.println(
-                                WeatherAnalysis.format(r)
-                        )
-                );
+                matches.forEach(r -> System.out.println(WeatherAnalysis.format(r)));
             }
 
-            case "3" -> System.out.println(
-                    "Rainy days: "
-                            + WeatherAnalysis.rainyDays(data)
-            );
+            case "3" -> System.out.println("Rainy days: " + WeatherAnalysis.rainyDays(data));
 
-            case "4" -> data.forEach(r ->
-                    System.out.println(
-                            WeatherAnalysis.format(r)
-                    )
-            );
+            case "4" -> data.forEach(r -> System.out.println(WeatherAnalysis.format(r)));
 
             case "0" -> {
                 System.out.println("Goodbye!");
                 return false;
             }
 
-            default -> System.out.println(
-                    "Choose 0, 1, 2, 3, or 4."
-            );
+            default -> System.out.println("Choose 0, 1, 2, 3, or 4.");
         }
 
         return true;
